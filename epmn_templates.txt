@@ -1,4 +1,4 @@
-------------creation------------
+##------------creation------------
 #set($VlanList = $Vlans.split(",", -1))
 #set($VRFList = $VRFs.split(",", -1))
 #set($GWList = $GWs.split(",", -1))
@@ -23,7 +23,7 @@ no shut
 #end
 
 
-------------removal------------
+##------------removal------------
 
 #set($VlanList = $Vlans.split(",", -1))
 !

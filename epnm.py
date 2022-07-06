@@ -60,8 +60,6 @@ class EPNM:
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
         vlans = bs_data['vlans']
-        if len(set(bs_data['NEW_PORT'])) != 1:
-            raise ValueError('Different base ports on one bs vlans')
         ifname = bs_data['NEW_PORT'][0]
         return {
             "cliTemplateCommand": {
@@ -91,16 +89,12 @@ class EPNM:
             }
         }
 
-    def _json_create_subs(
-            self, pe_id: int = None, bs_data: dict = {}):
+    def _json_create_subs(self, pe_id: int = None, bs_data: dict = {}) -> dict:
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
         vlans = bs_data['vlans']
-        # Check if all vlans are on same parent port
-        if len(set(bs_data['NEW_PORT'])) != 1:
-            raise ValueError('Different base ports on one bs vlans')
-
-        ifname = bs_data['NEW_PORT'][0]
+        ifname = bs_data['NEW_PORT']
+        description = bs_data['DESCRIPTION']
         return {
             "cliTemplateCommand": {
                 "options": {
@@ -134,6 +128,6 @@ class EPNM:
                     }
                     ]
                 },
-                "templateName": template_name
+                "templateName": self.create_subs_template_name
             }
         }
