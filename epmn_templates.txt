@@ -1,0 +1,37 @@
+------------creation------------
+#set($VlanList = $Vlans.split(",", -1))
+#set($VRFList = $VRFs.split(",", -1))
+#set($GWList = $GWs.split(",", -1))
+#set($SubMaskList = $SMasks.split(",", -1))
+!
+interface ${ifName}
+description -- TO ${parentDescription} --
+no shut
+negotiation auto
+!
+#set ($i = 0)
+#foreach ($Vlan in $VlanList)
+interface ${ifName}.${Vlan}
+description -- TO ${parentDescription} VID ${Vlan} --
+vrf $VRFList[i]
+ipv4 address $GWList[i] $SubMaskList[i]
+encapsulation dot1q $Vlan
+load-interval 30
+service-policy input PM_NNI_IN
+no shut
+	#set($i = $i + 1)
+#end
+
+
+------------removal------------
+
+#set($VlanList = $Vlans.split(",", -1))
+!
+#if ($shutParent == true)
+interface $ifName
+no description
+shutdown
+#end
+!
+#foreach ($Vlan in $VlanList)
+no interface ${ifName}.${Vlan}
