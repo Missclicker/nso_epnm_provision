@@ -10,7 +10,7 @@ def normalize_crossing(file_name):
     data.columns = columns
     # drop empty vlans and BSes with iface on two+ BSes
     empty_vlans_on_bs = data[data.vlan.isna()].BS
-    temp_bs_ports = data.groupby(['BS', 'NEW_PORT']).size()
+    temp_bs_ports = data.groupby(['BS', 'port']).size()
     diff_ports_on_bs = temp_bs_ports[temp_bs_ports.index.get_level_values(0).duplicated()].index.get_level_values(0)
 
     data = data[~(
@@ -22,7 +22,10 @@ def normalize_crossing(file_name):
     # fix empty descriptions
     data['description'] = data.apply(lambda x: x['description'].strip('- ').replace('To ', '') if type(
         x['description']) == str else f"BS {x['BS']}", axis=1)
+    data['BS'] = data.BS.astype(str)
     data = data.set_index(['BS', 'vlan'])
+
+    # TODO check for BS type - IRB or subs - and add separate column
 
     return data
 

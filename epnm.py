@@ -27,6 +27,8 @@ class EPNM:
         url = '/webacs/api/v4/data/CliTemplate.json?.full=true&path=contains("User Defined")'
         r = self.__base_get__(url)
         if r.ok:
+            # to reach template names use:
+            # [i['cliTemplateDTO']['name'] for i in r.json()['queryResponse']['entity']]
             return r.json()
         else:
             return {'Error': r.content}
@@ -45,22 +47,33 @@ class EPNM:
     def check_job(self, job_name):
         pass
 
-    def get_device_config(self):
-        pass
+    def get_rtr_config(self, rtr_json):
+        def config_url(dev_name):
+            return f'/webacs/api/v4/data/ConfigVersions.json?.full=true&deviceName=%22{dev_name}%22&.sort=-createdAt' \
+                   f'&.maxResults=1 '
+
+        def config_download(f_id):
+            return f'/webacs/api/v4/op/configArchiveService/extractSanitizedFile.json?fileId={f_id}'
+
+        r = requests.get(self.base_url + config_url(rtr_json['devicesDTO']['deviceName']), verify=False)
+        # TODO check if config links are always in the same order or add check "admin/device config"
+        file_id = r.json()['queryResponse']['entity'][0]['configVersionsDTO']['fileInfos']['fileInfo'][0]['fileId']
+        config = requests.get(self.base_url + config_download(file_id), verify=False)
+        return config
 
     def generate_json(self, template_name: str = "", **kwargs) -> dict:
         if template_name == "remove_subs":
-            return self._json_remove_subs(kwargs)
+            return self._json_remove_subs(**kwargs)
         elif template_name == "create_subs":
-            return self._json_create_subs(kwargs)
+            return self._json_create_subs(**kwargs)
         else:
-            return False  # {'Error': 'Please, provide template_name'}
+            return {'Error': 'Please, provide template_name'}
 
-    def _json_remove_subs(self, pe_id: int = 0, bs_data: dict = {}, shut_parent: int = 0) -> dict:
+    def _json_remove_subs(self, pe_id: int = 0, bs_data: dict = None, shut_parent: int = 0) -> dict:
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
         vlans = bs_data['vlans']
-        ifname = bs_data['NEW_PORT'][0]
+        ifname = bs_data['port'][0]
         return {
             "cliTemplateCommand": {
                 "options": {
@@ -89,12 +102,15 @@ class EPNM:
             }
         }
 
-    def _json_create_subs(self, pe_id: int = None, bs_data: dict = {}) -> dict:
+    def _json_create_subs(self, pe_id: int = None, bs_data: dict = None) -> dict:
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
         vlans = bs_data['vlans']
-        ifname = bs_data['NEW_PORT']
-        description = bs_data['DESCRIPTION']
+        ifname = bs_data['port'][0]
+        description = bs_data['description'][0]
+        vrfs = ','.join(bs_data['vrf'])
+        gws = ','.join(bs_data['gw'])
+        smasks = ','.join(bs_data['mask'])
         return {
             "cliTemplateCommand": {
                 "options": {
@@ -115,13 +131,13 @@ class EPNM:
                                 "value": vlans
                             }, {
                                 "name": "VRFs",
-                                "value": VRFs
+                                "value": vrfs
                             }, {
                                 "name": "GWs",
-                                "value": GWs
+                                "value": gws
                             }, {
                                 "name": "SMasks",
-                                "value": SMasks
+                                "value": smasks
                             }
                             ]
                         }
