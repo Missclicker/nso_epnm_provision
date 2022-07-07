@@ -105,6 +105,7 @@ def chose_operation(one_bs: pd.DataFrame, bs_id: str) -> bool:
 
 
 def bs_deploy(deploy_dict: dict, template) -> bool:
+    # TODO last hostname numbers
     rtr_ip = DEVICES[DEVICES['Site#.1'] == deploy_dict['ncs'][0]]['Loopback0'].to_string(index=False)
     pe_id = get_pe_id(rtr_ip)
     creation_job = epnm.push_template(template, pe_id=pe_id, bs_data=deploy_dict)

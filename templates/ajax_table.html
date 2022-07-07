@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <table id="data" class="table table-striped">
+    <thead>
+      <tr>
+        {% for col in column_names %}
+          <th>{{col}}</th>
+        {% endfor %}
+      </tr>
+    </thead>
+    <tbody>
+    </tbody>
+  </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#data').DataTable({
+        ajax: '/api/data',
+        columns: [
+          {data: 'name'},
+          {data: 'age', searchable: false},
+          {data: 'address', orderable: false, searchable: false},
+          {data: 'phone', orderable: false, searchable: false},
+          {data: 'email'}
+        ],
+      });
+    });
+  </script>
+{% endblock %}
