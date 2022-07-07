@@ -9,11 +9,11 @@ class EPNM:
     def __init__(self, base_url):
         self.base_url = base_url
         self.remove_subs_template_name = 'SUBs_REMOVAL'
-        self.create_subs_template_name = 'CREATE_L3_SUBS'
+        self.create_subs_template_name = 'L3_SUBS_CREATION'
         self.create_pw_template_name = 'CREATE_P2P_PW'
 
-    def __base_get__(self, url):
-        return requests.get(self.base_url + url, verify=False)
+    def __base_get__(self, url, timeout=None):
+        return requests.get(self.base_url + url, timeout=timeout, verify=False)
 
     def get_devices(self):
         url = '/webacs/api/v4/data/Devices.json?.full=true'
@@ -33,9 +33,9 @@ class EPNM:
         else:
             return {'Error': r.content}
 
-    def push_template(self, template_name: str) -> dict:
+    def push_template(self, template_name: str, **kwargs) -> dict:
         url = '/webacs/api/v4/op/cliTemplateConfiguration/deployTemplateThroughJob.json'
-        data = self.generate_json(template_name)
+        data = self.generate_json(template_name, **kwargs)
         if 'Error' in data.keys():
             return data
         r = requests.put(self.base_url + url, json=data, verify=False)
@@ -44,8 +44,15 @@ class EPNM:
         else:
             return {'Error': r.content}
 
-    def check_job(self, job_name):
-        pass
+    def check_job(self, job_json) -> bool:
+        # TODO check job status on EPNM, with loop until finished
+        url = '/webacs/api/v4/op/jobService/runhistory.json?jobName='\
+               f'{job_json["mgmtResponse"]["cliTemplateCommandJobResult"][0]["jobName"]}'
+        r = self.__base_get__(url, timeout=10)
+        if "1/1 template configurations successfully applied" in str(r.json()):
+            return True
+        else:
+            return False
 
     def get_rtr_config(self, rtr_json):
         def config_url(dev_name):
@@ -72,7 +79,7 @@ class EPNM:
     def _json_remove_subs(self, pe_id: int = 0, bs_data: dict = None, shut_parent: int = 0) -> dict:
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
-        vlans = bs_data['vlans']
+        vlans = ','.join([str(x) for x in bs_data['vlans']])
         ifname = bs_data['port'][0]
         return {
             "cliTemplateCommand": {
@@ -105,7 +112,7 @@ class EPNM:
     def _json_create_subs(self, pe_id: int = None, bs_data: dict = None) -> dict:
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
-        vlans = bs_data['vlans']
+        vlans = ','.join([str(x) for x in bs_data['vlans']])
         ifname = bs_data['port'][0]
         description = bs_data['description'][0]
         vrfs = ','.join(bs_data['vrf'])
