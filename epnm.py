@@ -1,3 +1,5 @@
+from time import sleep
+
 import requests
 import urllib3
 
@@ -45,13 +47,16 @@ class EPNM:
             return {'Error': r.content}
 
     def check_job(self, job_json) -> bool:
-        # TODO check job status on EPNM, with loop until finished
+        job_status = r = 'RUNNING'
         url = '/webacs/api/v4/op/jobService/runhistory.json?jobName='\
                f'{job_json["mgmtResponse"]["cliTemplateCommandJobResult"][0]["jobName"]}'
-        r = self.__base_get__(url, timeout=10)
-        if "1/1 template configurations successfully applied" in str(r.json()):
+        while job_status in str(r):
+            r = self.__base_get__(url, timeout=10).json()
+            sleep(1)
+        if "1/1 template configurations successfully applied" in str(r):
             return True
         else:
+            print(r.json())
             return False
 
     def get_rtr_config(self, rtr_json):
