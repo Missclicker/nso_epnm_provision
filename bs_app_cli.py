@@ -1,5 +1,4 @@
 import pandas as pd
-from time import sleep
 from Data_files.base_data import *
 from epnm import EPNM
 from normalize_data import normalize_crossing
@@ -28,7 +27,7 @@ def chose_bs(bs_data: pd.DataFrame, deploy_cache: pd.DataFrame) -> bool:
         exit()
 
     chosen_bs_id = bs_data.reset_index().iloc[bs_num]['BS']
-    return chose_operation(bs_data.loc[chosen_bs_id], chosen_bs_id)
+    return chose_operation(bs_data.loc[chosen_bs_id], chosen_bs_id, from_cli=True)
 
 
 def refresh_cache(vlans: list, bs_id: str, operation: bool, ncs: int = 0):
@@ -39,7 +38,7 @@ def refresh_cache(vlans: list, bs_id: str, operation: bool, ncs: int = 0):
     else:
         DEPLOY_STATUS = DEPLOY_STATUS.reset_index()[
             DEPLOY_STATUS.reset_index().bs_id != bs_id
-        ].set_index(['bs_id', 'vlan'])
+            ].set_index(['bs_id', 'vlan'])
     DEPLOY_STATUS.sort_index().to_csv(DEPLOY_FILE)
 
 
@@ -66,7 +65,7 @@ def get_pe_id(rtr_ip: str) -> int:
     return pe_id
 
 
-def chose_operation(one_bs: pd.DataFrame, bs_id: str) -> bool:
+def chose_operation(one_bs: pd.DataFrame, bs_id: str, from_cli: bool = False) -> bool:
     if one_bs.deployed_on.isna().all():
         print('This service was not deployed, checking on router')
 
@@ -80,21 +79,25 @@ def chose_operation(one_bs: pd.DataFrame, bs_id: str) -> bool:
     else:
         # check if all vlans are deployed on router according to "crossing"
         if (one_bs['ncs'] == one_bs['deployed_on']).all():
-            print('BS already deployed according to crossing')
-            print('Do you want to delete BS from router?')
-            answer = input("Y/n > ")
-            if 'n' in answer.lower():
-                print('exiting')
-                return True
-            else:
-                print('Deleting BS...')
-                template = 'remove_subs'
-                deploy_dict = dict_from_df(one_bs, bs_id)
+            if from_cli:
+                print('BS already deployed according to crossing')
+                print('Do you want to delete BS from router?')
+                answer = input("Y/n > ")
+                if 'n' in answer.lower():
+                    print('exiting')
+                    return True
+
+            print('Deleting BS...')
+            template = 'remove_subs'
         else:
             # deploy only those vlans which are not on RTR
-            to_deploy = one_bs[one_bs['ncs'] == one_bs['deployed_on']]
-            deploy_dict = dict_from_df(to_deploy, bs_id)
+            # to_deploy = one_bs[one_bs['ncs'] == one_bs['deployed_on']]
             template = 'create_subs'
+    bs_action(template, one_bs, bs_id)
+
+
+def bs_action(template: str, df: pd.DataFrame, bs_id: str):
+    deploy_dict = dict_from_df(df, bs_id)
     deploy_result = bs_deploy(deploy_dict, template)
     if deploy_result:
         if template == 'create_subs':
@@ -106,7 +109,7 @@ def chose_operation(one_bs: pd.DataFrame, bs_id: str) -> bool:
 
 def bs_deploy(deploy_dict: dict, template) -> bool:
     # TODO last hostname numbers
-    rtr_ip = DEVICES[DEVICES['Site#.1'] == deploy_dict['ncs'][0]]['Loopback0'].to_string(index=False)
+    rtr_ip = DEVICES[DEVICES['Site#.1'] == int(deploy_dict['ncs'][0])]['Loopback0'].to_string(index=False)
     pe_id = get_pe_id(rtr_ip)
     creation_job = epnm.push_template(template, pe_id=pe_id, bs_data=deploy_dict)
     print('Job pushed, waiting for registration...')

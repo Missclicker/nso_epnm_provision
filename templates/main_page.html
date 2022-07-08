@@ -26,13 +26,13 @@
           {data: 'bs_type'},
           {data: 'description'},
           {data: 'service', searchable: false},
-          {data: 'ncs'},
           {data: 'port'},
+          {data: 'ncs'},
           {data: 'deployed_on'},
           {data: 'BS',
             "bSortable": false,
             "mRender": function(data) {
-              return '<a class="btn btn-info btn-sm" href=data/' + data + '>' + 'Deploy/Delete' + '</a>';
+              return '<a class="btn btn-info btn-sm" href=' + data + '>' + 'Deploy/Delete' + '</a>';
             }
 
           },
