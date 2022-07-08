@@ -108,8 +108,7 @@ def bs_action(template: str, df: pd.DataFrame, bs_id: str):
 
 
 def bs_deploy(deploy_dict: dict, template) -> bool:
-    # TODO last hostname numbers
-    rtr_ip = DEVICES[DEVICES['Site#.1'] == int(deploy_dict['ncs'][0])]['Loopback0'].to_string(index=False)
+    rtr_ip = DEVICES[DEVICES.Hostname.str.endswith(str(deploy_dict['ncs'][0]))]['Loopback0'].to_string(index=False)
     pe_id = get_pe_id(rtr_ip)
     creation_job = epnm.push_template(template, pe_id=pe_id, bs_data=deploy_dict)
     print('Job pushed, waiting for registration...')
