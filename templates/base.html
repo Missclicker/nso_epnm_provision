@@ -15,7 +15,7 @@
     }
 
     #myBar {
-      width: 1%;
+      width: 0%;
       height: 30px;
       background-color: #04AA6D;
     }
@@ -229,7 +229,9 @@
     <div class="container">
       <h1>{{ title }}</h1>
       {% if title == "BS Deploy table" %}
+      <form action="/refresh" style="display: inline;" method="post">
         <button class="btn btn-1 btn-sep fa fa-refresh" onclick="location.href='/'" type="submit" name="main_page">REFRESH</button>
+      </form>
       {% endif %}
       <hr>
       {% block content %}{% endblock %}

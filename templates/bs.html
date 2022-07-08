@@ -22,11 +22,11 @@
 
 <button class="btn btn-1 btn-sep fa fa-list-ul" onclick="location.href='/'" type="submit" name="main_page">To Main</button>
 <form action="/deploy" style="display: inline;" method="post">
-    <button class="btn btn-2 btn-sep fa fa-minus-square" onclick="move()" type="submit" name="bs_id" value={{title}}>Deploy</button>
+    <button class="btn btn-2 btn-sep fa fa-plus-square" onclick="move('#27ae60')" type="submit" name="bs_id" value={{title}}>Deploy</button>
 </form>
 
 <form action="/delete" style="display: inline;" method="post">
-    <button class="btn btn-3 btn-sep fa fa-plus-square" onclick="move()" type="submit" name="bs_id" value={{title}}>Delete</button>
+    <button class="btn btn-3 btn-sep fa fa-minus-square" onclick="move('#e74c3c')" type="submit" name="bs_id" value={{title}}>Delete</button>
 </form>
 
 <div id="myProgress">
@@ -37,12 +37,13 @@
 {% block scripts %}
 <script>
 var i = 0;
-function move() {
+function move(clr) {
   if (i == 0) {
     i = 1;
     var elem = document.getElementById("myBar");
     var width = 1;
     var id = setInterval(frame, 150);
+    elem.style.backgroundColor = clr
     function frame() {
       if (width >= 100) {
         clearInterval(id);

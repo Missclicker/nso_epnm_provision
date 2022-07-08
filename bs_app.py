@@ -13,6 +13,8 @@ DF['deployed_on'] = DEPLOY_STATUS
 DF = DF.reset_index()
 
 
+# TODO refresh function & page
+
 @app.route('/')
 def index():
     # DO NOT CHANGE TITLE
@@ -45,9 +47,9 @@ def delete():
     template = 'remove_subs'
     bs_id = request.form['bs_id']
     one_bs = DF.set_index(['BS', 'vlan']).loc[bs_id]
-    one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
     if one_bs['deployed_on'].isna().all():
         return bs_page(bs_id)
+    one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
     operation_result = bs_action(template, one_bs, bs_id)
     if operation_result:
         refresh_cache()
@@ -59,7 +61,8 @@ def bs_page(bs_id):
     one_bs = DF[DF['BS'] == bs_id][[
         'vlan', 'ncs', 'deployed_on', 'description', 'vrf', 'service', 'port', 'ipv4',
         'gw', 'mask', 'bs', 'bs_type',
-    ]]
+    ]].fillna('-')
+
     one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
 
     return render_template(
