@@ -7,24 +7,37 @@
         {% for col in column_names %}
           <th>{{col}}</th>
         {% endfor %}
+          <th>Edit</th>
       </tr>
     </thead>
     <tbody>
-      {% for row in row_data %}
-        <tr>
-          {% for col, row_ in zip(column_names, row) %}
-          {% if col == link_column %}
-          <td>
-            <button type="submit" value={{ row_ }} name="person_id" form="patient_form" class="action_button">
-                {{ row_ }}
-            </button>
-          </td>
-          {% else %}
-          <td>{{row_}}</td>
-          {% endif %}
-          {% endfor %}
-        </tr>
-      {% endfor %}
     </tbody>
   </table>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    $(document).ready(function () {
+      $('#data').DataTable({
+        ajax: '/api/data',
+        columns: [
+          {data: 'BS' },
+          {data: 'vlan'},
+          {data: 'bs_type'},
+          {data: 'description'},
+          {data: 'service', searchable: false},
+          {data: 'ncs'},
+          {data: 'port'},
+          {data: 'deployed_on'},
+          {data: 'BS',
+            "bSortable": false,
+            "mRender": function(data) {
+              return '<a class="btn btn-info btn-sm" href=data/' + data + '>' + 'Deploy/Delete' + '</a>';
+            }
+
+          },
+        ],
+      });
+    });
+  </script>
 {% endblock %}
