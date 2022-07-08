@@ -15,6 +15,7 @@ DF = DF.reset_index()
 
 @app.route('/')
 def index():
+    # DO NOT CHANGE TITLE
     return render_template(
         "main_page.html",
         column_names=DF[[
