@@ -18,7 +18,8 @@ DF = DF.reset_index()
 @app.route('/')
 def index():
     # DO NOT CHANGE TITLE
-    main_data = DF[['BS', 'vlan', 'bs_type', 'service', 'description', 'port', 'CSG-id', 'deployed_on']]
+    main_data = DF[['BS', 'vlan', 'bs_type', 'service', 'description', 'port', 'ncs', 'deployed_on']]
+    main_data.columns = ['BS', 'vlan', 'bs_type', 'service', 'description', 'port', 'CSG-id', 'deployed_on']
     return render_template(
         "main_page.html",
         column_names=main_data.columns.values,
