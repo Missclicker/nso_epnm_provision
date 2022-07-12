@@ -82,6 +82,7 @@ class EPNM:
             return {'Error': 'Please, provide template_name'}
 
     def _json_remove_subs(self, pe_id: int = 0, bs_data: dict = None, shut_parent: int = 0) -> dict:
+        # TODO delete description from main int
         if not pe_id or not bs_data:
             return {'Error': 'Please, provide data'}
         vlans = ','.join([str(x) for x in bs_data['vlans']])

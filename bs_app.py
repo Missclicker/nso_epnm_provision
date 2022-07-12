@@ -18,12 +18,13 @@ DF = DF.reset_index()
 @app.route('/')
 def index():
     # DO NOT CHANGE TITLE
+    main_data = DF[['BS', 'vlan', 'bs_type', 'service', 'description', 'port', 'CSG-id', 'deployed_on']]
     return render_template(
         "main_page.html",
-        column_names=DF[[
-            'BS', 'vlan', 'bs_type', 'service', 'description', 'ncs', 'port', 'deployed_on'
-        ]].columns.values,
-        row_data=list(DF.values.tolist()),
+        column_names=main_data.columns.values,
+        row_data=list(
+            main_data.values.tolist()
+        ),
         link_column="BS", zip=zip, title='BS Deploy table'
     )
 
