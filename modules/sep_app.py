@@ -39,30 +39,42 @@ def fill_sep_database():
     db.session.commit()
 
 
-def create_seps_dict(seps: list) -> dict:
-    sep_dict = {}
+def create_seps_list(seps: list) -> list:
+    sep_list = []
+    keys = {}
     for sep in seps:
-        if not sep.name in sep_dict:
-            sep_dict[sep.name] = [sep.rtr_name, sep.port]
+        if sep.name not in keys:
+            keys[sep.name] = len(sep_list)
+            sep_list.append({
+                'sep_name': sep.name,
+                'site_a': sep.rtr_name,
+                'port_a': sep.port
+            })
         else:
-            sep_dict[sep.name].extend([sep.rtr_name, sep.port])
-    return sep_dict
+            sep_list[keys[sep.name]].update({
+                'site_b': sep.rtr_name,
+                'port_b': sep.port
+            })
+    return sep_list
 
 
 @app.route('/seps')
 def show_seps():
-    seps = SEP.query.all()
-    sep_dict = create_seps_dict(seps)
     return render_template(
-        'sep.html', seps=sep_dict, title='ALL SEP RINGS'
+        'sep.html', title='ALL SEP RINGS'
     )
+
+
+@app.route('/seps/data')
+def seps_data():
+    return {'data': create_seps_list(SEP.query.all())}
 
 
 @app.route('/seps/<sep_name>/edit', methods=('GET', 'POST'))
 def edit_sep(sep_name):
     seps = SEP.query.filter_by(name=sep_name).all()
     if request.method == 'POST':
-        for i, sep in zip ([1,2], seps):
+        for i, sep in zip([1, 2], seps):
             sep.name = request.form['sep_name']
             sep.rtr_name = request.form[f'side_{i}']
             sep.port = request.form[f'port_{i}']
@@ -70,7 +82,8 @@ def edit_sep(sep_name):
         return redirect(url_for('show_seps'))
 
     return render_template(
-        'sep_edit.html', seps=seps, rtrs=[rtr.rtr_name for rtr in RTRS.query.all()]
+        'sep_edit.html', title=f'Edit "{sep_name}" details',
+        sep_name=sep_name, seps=seps, rtrs=[rtr.rtr_name for rtr in RTRS.query.all()]
     )
 
 

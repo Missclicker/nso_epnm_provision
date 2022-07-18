@@ -31,10 +31,7 @@ def index():
     return render_template(
         "main_page.html",
         column_names=main_data.columns.values,
-        row_data=list(
-            main_data.values.tolist()
-        ),
-        link_column="BS", zip=zip, title='BS Deploy table'
+        title='BS Deploy table'
     )
 
 

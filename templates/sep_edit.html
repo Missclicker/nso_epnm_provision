@@ -1,12 +1,11 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <form method="post">
+    <form method="post" style="display: inline;">
         <p>
             <label class="label" for="sep_name">SEP Name</label>
             <input type="text" name="sep_name" required
-                                      value={{ seps[0].name }}
->
+                   value={{ seps[0].name }}>
         </p>
 
         <p>
@@ -26,9 +25,7 @@
             <label class="label" for="port_1">Port A</label>
             <input type="text" name="port_1" required
                    placeholder="Port on rtr A"
-                   value={{ seps[0].port }}
-            >
-            </input>
+                   value={{ seps[0].port }}>
         </p>
 
         <p>
@@ -48,23 +45,21 @@
             <label class="label" for="port_2">Port B</label>
             <input type="text" name="port_2"
                    placeholder="Port on rtr B"
-                   value={{ seps[1].port }}
-            >
-            </input>
+                   value={{ seps[1].port }}>
         </p>
-        <p>
             <button class="btn btn-2 btn-sep fa fa-plus-square" type="submit">Submit</button>
             <a class="btn btn-1 btn-sep fa fa-list-ul" href="{{ url_for('show_seps') }}">Cancel</a>
-<!--            <a class="button button-3" type="submit">Delete SEP</a>-->
-        </p>
     </form>
-
+    <form method="post" action="{{ url_for('delete_sep', sep_name=sep_name) }}">
+        <button class="btn btn-3 btn-sep fa fa-minus-square"
+            onclick="return confirm('Are you sure you want to delete this entry?')">Delete SEP</button>
+    </form>
 {% endblock %}
 
 {% block scripts %}
 <script>
 function resetIfInvalid(el){
-   //just for beeing sure that nothing is done if no value selected
+   //just for being sure that nothing is done if no value selected
    if (el.value == "")
        return;
    var options = el.list.options;
