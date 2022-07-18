@@ -2,9 +2,9 @@
 
 {% block top_buttons %}
   <form action="{{ url_for('refresh') }}" style="display: inline;" method="post">
-    <button class="btn btn-1 btn-sep fa fa-refresh">REFRESH</button>
+    <a class="btn btn-1 btn-sep fa fa-refresh">REFRESH</a>
   </form>
-  <button class="btn btn-1 btn-sep fa fa-refresh" href="{{ url_for('show_seps') }}">Manage SEPs</button>
+  <a class="btn btn-1 btn-sep fa fa-refresh" href="{{ url_for('show_seps') }}">Manage SEPs</a>
 {% endblock %}
 
 

@@ -5,16 +5,13 @@
         <p>
             <label class="label" for="sep_name">SEP Name</label>
             <input type="text" name="sep_name" required
-                                      value={{ seps[0].name }}
->
+                   placeholder="SEP Name">
         </p>
 
         <p>
             <label class="label" for="side_1">Router A</label>
             <input list="rtrs" id="side_1" name="side_1" required
-                    onchange="resetIfInvalid(this);" placeholder="Router side A"
-                    value={{ seps[0].rtr_name }}
-            />
+                   onchange="resetIfInvalid(this);" placeholder="Router side A"/>
             <datalist id="rtrs">
                 {% for rtr in rtrs %}
                     <option value="{{ rtr }}">
@@ -25,18 +22,14 @@
         <p>
             <label class="label" for="port_1">Port A</label>
             <input type="text" name="port_1" required
-                   placeholder="Port on rtr A"
-                   value={{ seps[0].port }}
-            >
+                   placeholder="Port on rtr A">
             </input>
         </p>
 
         <p>
             <label class="label" for="side_2">Router B</label>
             <input list="rtrs" id="side_2" name="side_2" required
-                   onchange="resetIfInvalid(this);" placeholder="Router side B"
-                    value={{ seps[1].rtr_name }}
-            />
+                   onchange="resetIfInvalid(this);" placeholder="Router side B"/>
             <datalist id="rtrs">
                 {% for rtr in rtrs %}
                     <option value="{{ rtr }}">
@@ -47,9 +40,7 @@
         <p>
             <label class="label" for="port_2">Port B</label>
             <input type="text" name="port_2"
-                   placeholder="Port on rtr B"
-                   value={{ seps[1].port }}
-            >
+                   placeholder="Port on rtr B">
             </input>
         </p>
         <p>

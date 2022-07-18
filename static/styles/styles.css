@@ -1,3 +1,8 @@
+.label {
+  display: inline-block;
+  width: 100px;
+}
+
 #myProgress {
   width: 100%;
   background-color: #ddd;
@@ -139,6 +144,8 @@
 /* General button style */
 .button {
   border: none;
+  width: 120px;
+  height: 30px;
   font-family: 'Lato';
   font-size: inherit;
   color: inherit;
@@ -148,6 +155,7 @@
   display: inline-block;
   margin: 1px 1px;
   text-transform: uppercase;
+  text-align: center;
   letter-spacing: 1px;
   font-weight: 700;
   outline: none;
@@ -157,37 +165,6 @@
   transition: all 0.3s;
 }
 
-.button:after {
-  content: '';
-  position: absolute;
-  z-index: -1;
-  -webkit-transition: all 0.3s;
-  -moz-transition: all 0.3s;
-  transition: all 0.3s;
-}
-
-/* Pseudo elements for icons */
-.button:before {
-  font-family: 'FontAwesome';
-  speak: none;
-  font-style: normal;
-  font-weight: normal;
-  font-variant: normal;
-  text-transform: none;
-  line-height: 1;
-  position: relative;
-  -webkit-font-smoothing: antialiased;
-}
-
-
-/* Icon separator */
-.button-sep {
-  padding: 25px 60px 25px 120px;
-}
-
-.button-sep:before {
-  background: rgba(0,0,0,0.15);
-}
 /* Button 1 */
 .button-1 {
   background: #3498db;
