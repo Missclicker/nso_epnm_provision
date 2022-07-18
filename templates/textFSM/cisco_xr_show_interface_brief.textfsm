@@ -1,0 +1,9 @@
+Value IFNAME ([\w+/\.]+)
+Value IP (unassigned|\d+\.\d+\.\d+\.\d+)
+Value INT_STATE (Up|Down|Shutdown)
+Value LINE_STATE (Up|Down|Shutdown)
+Value VRF (\S+)
+
+
+Start
+  ^\s*${IFNAME}\s+${IP}\s+${INT_STATE}\s+${LINE_STATE}\s+${VRF} -> Record

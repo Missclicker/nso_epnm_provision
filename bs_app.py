@@ -1,5 +1,5 @@
 import pandas as pd
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for
 from normalize_data import normalize_crossing
 from bs_app_cli import bs_action
 
@@ -17,7 +17,6 @@ DF = DF.reset_index()
 
 @app.route('/')
 def index():
-    # DO NOT CHANGE TITLE
     main_data = DF[['BS', 'vlan', 'bs_type', 'service', 'description', 'port', 'ncs', 'deployed_on']]
     main_data.columns = ['BS', 'vlan', 'bs_type', 'service', 'description', 'port', 'CSG-id', 'deployed_on']
     return render_template(
@@ -32,30 +31,28 @@ def index():
 
 @app.route('/deploy', methods=['POST'])
 def deploy():
-    template = 'create_subs'
     bs_id = request.form['bs_id']
     one_bs = DF.set_index(['BS', 'vlan']).loc[bs_id]
-    if one_bs['deployed_on'].notna().all():
-        return bs_page(bs_id)
-    one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
-    operation_result = bs_action(template, one_bs, bs_id)
-    if operation_result:
-        refresh_cache()
-    return bs_page(bs_id)
+    if not one_bs['deployed_on'].notna().all():
+        template = 'create_subs'
+        one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
+        operation_result = bs_action(template, one_bs, bs_id)
+        if operation_result:
+            refresh_cache()
+    return redirect(url_for('bs_page', bs_id=bs_id))
 
 
 @app.route('/delete', methods=['POST'])
 def delete():
-    template = 'remove_subs'
     bs_id = request.form['bs_id']
     one_bs = DF.set_index(['BS', 'vlan']).loc[bs_id]
-    if one_bs['deployed_on'].isna().all():
-        return bs_page(bs_id)
-    one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
-    operation_result = bs_action(template, one_bs, bs_id)
-    if operation_result:
-        refresh_cache()
-    return bs_page(bs_id)
+    if not one_bs['deployed_on'].isna().all():
+        template = 'remove_subs'
+        one_bs['deployed_on'] = one_bs['deployed_on'].astype(str).apply(lambda x: x.replace('.0', ''))
+        operation_result = bs_action(template, one_bs, bs_id)
+        if operation_result:
+            refresh_cache()
+    return redirect(url_for('bs_page', bs_id=bs_id))
 
 
 @app.route('/<bs_id>')
