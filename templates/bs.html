@@ -20,13 +20,13 @@
     </tbody>
   </table>
 
-<button class="btn btn-1 btn-sep fa fa-list-ul" onclick="location.href='/'" type="submit" name="main_page">To Main</button>
-<form action="/deploy" style="display: inline;" method="post">
-    <button class="btn btn-2 btn-sep fa fa-plus-square" onclick="move('#27ae60')" type="submit" name="bs_id" value={{title}}>Deploy</button>
+<button class="btn btn-1 btn-sep fa fa-list-ul" onclick="location.href='/'">To Main</button>
+<form action="{{ url_for('deploy', bs_id=bs_id) }}" style="display: inline;" method="post">
+    <button class="btn btn-2 btn-sep fa fa-plus-square" onclick="move('#27ae60')">Deploy</button>
 </form>
 
-<form action="/delete" style="display: inline;" method="post">
-    <button class="btn btn-3 btn-sep fa fa-minus-square" onclick="move('#e74c3c')" type="submit" name="bs_id" value={{title}}>Delete</button>
+<form action="{{ url_for('delete', bs_id=bs_id) }}" style="display: inline;" method="post">
+    <button class="btn btn-3 btn-sep fa fa-minus-square" onclick="move('#e74c3c')">Delete</button>
 </form>
 
 <div id="myProgress">

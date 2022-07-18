@@ -31,4 +31,4 @@ def normalize_crossing(file_name):
 
 
 if __name__ == '__main__':
-    df = normalize_crossing('Data_files/crossing_test.xlsx')
+    df = normalize_crossing('../Data_files/crossing_test.xlsx')

@@ -1,18 +1,15 @@
 import pandas as pd
 from Data_files.base_data import *
-from epnm import EPNM
-from normalize_data import normalize_crossing
+from modules.epnm import EPNM
+
 
 FILE = 'Data_files/crossing_test.xlsx'
 DEPLOY_FILE = 'bs_status.csv'
-DEPLOY_STATUS = pd.read_csv(DEPLOY_FILE, index_col=['bs_id', 'vlan'])
 DEVICES = pd.read_excel('Data_files/SITE_XH mapping.xlsx')
-
+DEPLOY_STATUS = pd.read_csv(DEPLOY_FILE)
+DEPLOY_STATUS['bs_id'] = DEPLOY_STATUS['bs_id'].astype(str)
+DEPLOY_STATUS = DEPLOY_STATUS.set_index(['bs_id', 'vlan'])
 epnm = EPNM(base_url)
-
-
-def check_router(bs_data: pd.DataFrame) -> bool:
-    return False
 
 
 def chose_bs(bs_data: pd.DataFrame, deploy_cache: pd.DataFrame) -> bool:
@@ -113,10 +110,3 @@ def bs_deploy(deploy_dict: dict, template) -> bool:
     creation_job = epnm.push_template(template, pe_id=pe_id, bs_data=deploy_dict)
     print('Job pushed, waiting for registration...')
     return epnm.check_job(creation_job)
-
-
-if __name__ == '__main__':
-    data = normalize_crossing(FILE)
-    result = True
-    while result:
-        result = chose_bs(data, DEPLOY_STATUS)

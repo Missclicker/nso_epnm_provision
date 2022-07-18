@@ -1,5 +1,13 @@
 {% extends "base.html" %}
 
+{% block top_buttons %}
+  <form action="{{ url_for('refresh') }}" style="display: inline;" method="post">
+    <button class="btn btn-1 btn-sep fa fa-refresh">REFRESH</button>
+  </form>
+  <button class="btn btn-1 btn-sep fa fa-refresh" href="{{ url_for('show_seps') }}">Manage SEPs</button>
+{% endblock %}
+
+
 {% block content %}
   <table id="data" class="table table-striped">
     <thead>
