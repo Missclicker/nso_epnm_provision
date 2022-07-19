@@ -12,3 +12,13 @@ Also, there's a separate module for SEP management (data stored in DB using SQLi
 
 ### SEP
 SEP is a customer-side backdoor link, which requires a service to be deployed as EVPN instances with BVI interfaces, simultaneously on two routers, rather than as a set of subinterfaces on one router
+
+## launch using 
+```python bs_app.py``` 
+
+or
+
+```
+$ export FLASK_APP=bs_app
+$ flask run
+```
