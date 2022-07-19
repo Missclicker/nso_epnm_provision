@@ -1,5 +1,5 @@
 Data_files/*
-__pycache__/*
+__pycache__*
 .idea/*
 ~*
 *ipynb*

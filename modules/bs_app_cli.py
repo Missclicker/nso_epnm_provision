@@ -10,6 +10,7 @@ DEPLOY_STATUS = pd.read_csv(DEPLOY_FILE)
 DEPLOY_STATUS['bs_id'] = DEPLOY_STATUS['bs_id'].astype(str)
 DEPLOY_STATUS = DEPLOY_STATUS.set_index(['bs_id', 'vlan'])
 epnm = EPNM(base_url)
+epnm = EPNM('omfg')
 
 
 def chose_bs(bs_data: pd.DataFrame, deploy_cache: pd.DataFrame) -> bool:

@@ -31,9 +31,9 @@ def fill_sep_database():
     # TODO duplicate validation, data validation - including router interfaces
     for i in [1, 2]:
         sep = SEP(
-            name=request.form['sep_name'],
-            rtr_name=request.form[f'side_{i}'],
-            port=request.form[f'port_{i}']
+            name=request.form['sep_name'].strip(),
+            rtr_name=request.form[f'side_{i}'].strip(),
+            port=request.form[f'port_{i}'].strip()
         )
         db.session.add(sep)
     db.session.commit()
@@ -75,9 +75,9 @@ def edit_sep(sep_name):
     seps = SEP.query.filter_by(name=sep_name).all()
     if request.method == 'POST':
         for i, sep in zip([1, 2], seps):
-            sep.name = request.form['sep_name']
-            sep.rtr_name = request.form[f'side_{i}']
-            sep.port = request.form[f'port_{i}']
+            sep.name = request.form['sep_name'].strip()
+            sep.rtr_name = request.form[f'side_{i}'].strip()
+            sep.port = request.form[f'port_{i}'].strip()
         db.session.commit()
         return redirect(url_for('show_seps'))
 
