@@ -90,7 +90,8 @@ def edit_sep(sep_name):
 @app.route('/seps/create', methods=('GET', 'POST'))
 def create_sep():
     if request.method == 'POST':
-        fill_sep_database()
+        if request.form['sep_name'].strip() not in [sep.name for sep in SEP.query.all()]:
+            fill_sep_database()
         return redirect(url_for('show_seps'))
 
     return render_template('sep_create.html',
